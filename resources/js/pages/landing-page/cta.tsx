@@ -23,10 +23,12 @@ const CTASection = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
-          <button className="group bg-white text-[#800000] hover:bg-gray-100 px-10 py-4 rounded-lg text-lg font-bold shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-            Start Learning Free
-            <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform" />
-          </button>
+            <a href="/login">
+                <button className="group bg-white text-[#800000] hover:bg-gray-100 px-10 py-4 rounded-lg text-lg font-bold shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                    Start Learning
+                    <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform" />
+                </button>
+            </a>
         </div>
 
         {/* Trust indicators */}
