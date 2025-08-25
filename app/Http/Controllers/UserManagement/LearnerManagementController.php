@@ -44,9 +44,9 @@ class LearnerManagementController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreLearnerRequest $request, LearnerManagementService $learnerService)
+    public function store(StoreLearnerRequest $request)
     {
-        $learnerService->createLearner($request->validated());
+        $this->learnerService->createLearner($request->validated());
 
         Cache::forget('learner.index');
 
@@ -79,10 +79,10 @@ class LearnerManagementController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateLearnerRequest $request, User $learner, LearnerManagementService $learnerService)
+    public function update(UpdateLearnerRequest $request, User $learner)
     {
         $learner->load('learner');
-        $learnerService->updateLearner($learner, $request->validated());
+        $this->learnerService->updateLearner($learner, $request->validated());
 
         return redirect()->route('learner.index')
             ->with('success', 'Learner updated successfully.');
@@ -91,25 +91,25 @@ class LearnerManagementController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $learner, LearnerManagementService $learnerService)
+    public function destroy(User $learner)
     {
-        $learnerService->deleteLearner($learner);
+        $this->learnerService->deleteLearner($learner);
 
         return redirect()->route('learner.index')
             ->with('success', 'Learner deleted successfully.');
     }
 
-    public function resetPassword(User $learner, LearnerManagementService $learnerService)
+    public function resetPassword(User $learner)
     {
-        $learnerService->resetLearnerPassword($learner);
+        $this->learnerService->resetLearnerPassword($learner);
 
         return redirect()->route('learner.index')
             ->with('success', 'Learner password reset successfully.');
     }
 
-    public function export(Request $request, LearnerManagementService $learnerService)
+    public function export(Request $request)
     {
-        return $learnerService->export($request);
+        return $this->learnerService->export($request);
     }
 
     public function bulkPage()
@@ -158,14 +158,14 @@ class LearnerManagementController extends Controller
      * POST /user-management/learner/bulk/upload
      * Accept file, parse & validate via service, return preview JSON
      */
-    public function bulkUpload(Request $request, LearnerManagementService $learnerService)
+    public function bulkUpload(Request $request)
     {
         $request->validate([
             'file' => 'required|file|mimes:xlsx,xls,csv',
         ]);
 
         // parseAndValidate should return [$rows, $summary]
-        [$rows, $summary] = $learnerService->parseAndValidate($request->file('file'));
+        [$rows, $summary] = $this->learnerService->parseAndValidate($request->file('file'));
 
         return response()->json([
             'rows' => $rows,
@@ -177,7 +177,7 @@ class LearnerManagementController extends Controller
      * POST /user-management/learner/bulk/insert
      * Accept selected validated rows and commit to DB
      */
-    public function bulkInsert(Request $request, LearnerManagementService $learnerService)
+    public function bulkInsert(Request $request)
     {
         $request->validate([
             'rows' => 'required|array|min:1',
@@ -194,7 +194,7 @@ class LearnerManagementController extends Controller
 
         $rows = $request->input('rows');
 
-        $inserted = $learnerService->insertRows($rows);
+        $inserted = $this->learnerService->insertRows($rows);
 
         // clear cache if you cache the index/listing
         try {

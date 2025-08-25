@@ -16,11 +16,11 @@ import { z } from 'zod';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Student Management',
-        href: '/user-management/learner',
+        title: 'Instructor Management',
+        href: '/user-management/instructor',
     },
     {
-        title: 'Edit Student',
+        title: 'Edit Instructor',
         href: '#',
     },
 ];
@@ -41,47 +41,33 @@ const userSchema = z.object({
     email: z.email('Invalid email address').min(1, 'Email is required'),
     phone: z.string().regex(/^\+63\d{10}$/, 'Phone must start with +63 and contain exactly 10 digits after it'),
     bday: z.string().min(1, 'Birthday is required'),
-    student_number: z
+    instructor_code: z
         .string()
-        .min(1, 'Student number is required')
-        .regex(/^[A-Z0-9\-]+$/, 'Student number can only contain uppercase letters, numbers, and hyphens'),
-    course: z.string().min(1, 'Course is required'),
-    enrollment_date: z.string().optional(),
+        .min(1, 'Instructor code is required')
+        .regex(/^[A-Z0-9\-]+$/, 'Instructor code can only contain uppercase letters, numbers, and hyphens'),
+    instructor_type: z.string().min(1, 'Instructor type is required'),
+    date_started: z.string().optional(),
     status: z.enum(['active', 'inactive'], {
         required_error: 'Status is required',
     }),
 });
 
-// Course options - you can modify these based on your institution
-const courseOptions = [
+// Instructor Types - you can modify these based on your institution
+const instructorTypeOptions = [
     {
-        value: 'Bachelor of Science in Accountancy',
+        value: 'Part Time Faculty',
     },
     {
-        value: 'Bachelor of Science in Business Administration',
-    },
-    {
-        value: 'Bachelor of Science in Human Resources Management',
-    },
-    {
-        value: 'Bachelor of Science in Information Technology',
-    },
-    {
-        value: 'Bachelor of Science in Enterpreneurship',
-    },
-    {
-        value: 'Bachelor of Science in Education Major in English',
-    },
-    {
-        value: 'Bachelor of Science in Education Major in Mathematics',
+        value: 'Full Time Faculty',
     },
 ];
 
-export default function EditLearner({ learner }: { learner: any }) {
+
+export default function EditInstructor({ instructor }: { instructor: any }) {
     type UserFormData = z.infer<typeof userSchema>;
 
     const [cbOpen, setCbOpen] = useState(false);
-    const [cbValue, setCbValue] = useState<string[]>(learner.learner.course);
+    const [cbValue, setCbValue] = useState<string[]>(instructor.instructor.course);
 
     const {
         data,
@@ -90,16 +76,16 @@ export default function EditLearner({ learner }: { learner: any }) {
         processing,
         errors: serverErrors,
     } = useForm<UserFormData>({
-        fname: learner.fname ?? '',
-        mname: learner.mname ?? '',
-        lname: learner.lname ?? '',
-        email: learner.email ?? '',
-        phone: learner.phone ?? '+63',
-        bday: learner.bday ?? '',
-        student_number: learner.learner.student_number ?? '',
-        course: learner.learner.course ?? '',
-        enrollment_date: learner.learner.enrollment_date ?? '',
-        status: learner.status ?? 'active',
+        fname: instructor.fname ?? '',
+        mname: instructor.mname ?? '',
+        lname: instructor.lname ?? '',
+        email: instructor.email ?? '',
+        phone: instructor.phone ?? '+63',
+        bday: instructor.bday ?? '',
+        instructor_code: instructor.instructor.instructor_code ?? '',
+        instructor_type: instructor.instructor.instructor_type ?? '',
+        date_started: instructor.instructor.date_started ?? '',
+        status: instructor.status ?? 'active',
     });
 
     const [clientErrors, setClientErrors] = useState<Partial<Record<keyof UserFormData, string>>>({});
@@ -127,7 +113,7 @@ export default function EditLearner({ learner }: { learner: any }) {
         setClientErrors({});
 
         MySwal.fire({
-            title: <p className="text-gray-900 dark:text-gray-100">Update Student Data...</p>,
+            title: <p className="text-gray-900 dark:text-gray-100">Update Instructor Data...</p>,
             allowOutsideClick: false,
             allowEscapeKey: false,
             background: 'var(--background)',
@@ -141,11 +127,11 @@ export default function EditLearner({ learner }: { learner: any }) {
             },
         });
 
-        put(route('learner.update', { id: learner.id }), {
+        put(route('instructor.update', { id: instructor.id }), {
             onError: () => {
                 MySwal.fire({
                     icon: 'error',
-                    title: 'Error Updating Student',
+                    title: 'Error Updating Instructor',
                     text: 'Please check the form and try again.',
                     background: 'var(--background)',
                     color: 'var(--foreground)',
@@ -158,10 +144,10 @@ export default function EditLearner({ learner }: { learner: any }) {
         });
     };
 
-    // Auto-set username when student number changes
-    const handleStudentNumberChange = (value: string) => {
+    // Auto-set username when instructor code changes
+    const handleInstructorCodeChange = (value: string) => {
         const formattedValue = value.toUpperCase();
-        setData('student_number', formattedValue);
+        setData('instructor_code', formattedValue);
     };
 
     const getFieldError = (field: keyof UserFormData) => {
@@ -170,7 +156,7 @@ export default function EditLearner({ learner }: { learner: any }) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Edit Student" />
+            <Head title="Edit Instructor" />
             <div className="min-h-screen bg-white transition-colors duration-300 dark:bg-gray-900">
                 <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
                     {/* Header Section */}
@@ -181,9 +167,9 @@ export default function EditLearner({ learner }: { learner: any }) {
                                 variant="outline"
                                 className="border-gray-200 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700"
                             >
-                                <Link href={route('learner.index')}>
+                                <Link href={route('instructor.index')}>
                                     <ArrowLeft className="mr-2 h-4 w-4" />
-                                    <span className="hidden sm:inline">Back to Students</span>
+                                    <span className="hidden sm:inline">Back to Instructor</span>
                                     <span className="sm:hidden">Back</span>
                                 </Link>
                             </Button>
@@ -194,9 +180,9 @@ export default function EditLearner({ learner }: { learner: any }) {
                                 <UserCheck className="h-8 w-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-gray-100">Edit Student</h1>
+                                <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-gray-100">Edit Instructor</h1>
                                 <p className="mt-1 text-base text-gray-600 sm:text-lg dark:text-gray-400">
-                                    Update the student account with the latest information
+                                    Update the instructor account with the latest information
                                 </p>
                             </div>
                         </div>
@@ -214,7 +200,7 @@ export default function EditLearner({ learner }: { learner: any }) {
                                     <div>
                                         <CardTitle className="text-xl text-gray-900 dark:text-gray-100">Account Status</CardTitle>
                                         <CardDescription className="text-gray-600 dark:text-gray-400">
-                                            Set whether this student account is active or inactive
+                                            Set whether this instructor account is active or inactive
                                         </CardDescription>
                                     </div>
                                 </div>
@@ -253,7 +239,7 @@ export default function EditLearner({ learner }: { learner: any }) {
                                     <div>
                                         <CardTitle className="text-xl text-gray-900 dark:text-gray-100">Personal Information</CardTitle>
                                         <CardDescription className="text-gray-600 dark:text-gray-400">
-                                            Basic student details and contact information
+                                            Basic instructor details and contact information
                                         </CardDescription>
                                     </div>
                                 </div>
@@ -371,7 +357,7 @@ export default function EditLearner({ learner }: { learner: any }) {
                                             value={data.email}
                                             onChange={(e) => setData('email', e.target.value)}
                                             className="border-gray-200 bg-gray-50 transition-colors focus:border-red-500 focus:ring-red-500/20 dark:border-gray-600 dark:bg-gray-700 dark:focus:border-red-400"
-                                            placeholder="student@example.com"
+                                            placeholder="instructor@example.com"
                                         />
                                         {getFieldError('email') && (
                                             <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
@@ -430,47 +416,47 @@ export default function EditLearner({ learner }: { learner: any }) {
                                     <div>
                                         <CardTitle className="text-xl text-gray-900 dark:text-gray-100">Academic Information</CardTitle>
                                         <CardDescription className="text-gray-600 dark:text-gray-400">
-                                            Course details and enrollment information
+                                            Instructor details and faculty information
                                         </CardDescription>
                                     </div>
                                 </div>
                             </CardHeader>
                             <CardContent className="p-6">
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                                    {/* Student Number */}
+                                    {/* Instructor Code */}
                                     <div className="space-y-2">
                                         <Label
-                                            htmlFor="student_number"
+                                            htmlFor="instructor_code"
                                             className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300"
                                         >
                                             <Hash className="h-4 w-4" />
-                                            Student Number *
+                                            Instructor Code *
                                         </Label>
                                         <Input
-                                            id="student_number"
+                                            id="instructor_code"
                                             type="text"
-                                            value={data.student_number}
-                                            onChange={(e) => handleStudentNumberChange(e.target.value)}
+                                            value={data.instructor_code}
+                                            onChange={(e) => handleInstructorCodeChange(e.target.value)}
                                             className="border-gray-200 bg-gray-50 font-mono transition-colors focus:border-red-500 focus:ring-red-500/20 dark:border-gray-600 dark:bg-gray-700 dark:focus:border-red-400"
                                             placeholder="2024-1234 (will be used as username)"
                                         />
-                                        {getFieldError('student_number') && (
+                                        {getFieldError('instructor_code') && (
                                             <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
                                                 <AlertCircle className="h-4 w-4" />
-                                                {getFieldError('student_number')}
+                                                {getFieldError('instructor_code')}
                                             </div>
                                         )}
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">This will also be used as the student's username</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">This will also be used as the instructor's username</p>
                                     </div>
 
-                                    {/* Course */}
+                                    {/* Instructor Type */}
                                     <div className="space-y-2">
                                         <Label
-                                            htmlFor="course"
+                                            htmlFor="instructor_type"
                                             className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300"
                                         >
                                             <BookOpen className="h-4 w-4" />
-                                            Course/Program *
+                                            Instructor Type *
                                         </Label>
 
                                         <Popover open={cbOpen} onOpenChange={setCbOpen}>
@@ -481,31 +467,31 @@ export default function EditLearner({ learner }: { learner: any }) {
                                                     aria-expanded={cbOpen}
                                                     className="w-full border-gray-200 bg-gray-50 focus:border-red-500 focus:ring-red-500/20 dark:border-gray-600 dark:bg-gray-700 dark:focus:border-red-400"
                                                 >
-                                                    {cbValue ? courseOptions.find((course) => course.value === cbValue)?.value : 'Select Course'}
+                                                    {cbValue ? instructorTypeOptions.find((type) => type.value === cbValue)?.value : 'Select Instructor Type'}
                                                     <ChevronsUpDown className="ml-auto h-4 w-4 opacity-50" />
                                                 </Button>
                                             </PopoverTrigger>
                                             <PopoverContent className="w-[200px] border border-gray-200 bg-white p-0 dark:border-gray-700 dark:bg-gray-800">
                                                 <Command>
-                                                    <CommandInput placeholder="Search course..." />
+                                                    <CommandInput placeholder="Search instructor type..." />
                                                     <CommandList>
-                                                        <CommandEmpty>No course found.</CommandEmpty>
+                                                        <CommandEmpty>No instructor type found.</CommandEmpty>
                                                         <CommandGroup>
-                                                            {courseOptions.map((course) => (
+                                                            {instructorTypeOptions.map((type) => (
                                                                 <CommandItem
-                                                                    key={course.value}
-                                                                    value={course.value}
+                                                                    key={type.value}
+                                                                    value={type.value}
                                                                     onSelect={(currentValue) => {
                                                                         setCbValue(currentValue === cbValue ? '' : currentValue);
-                                                                        setData('course', currentValue);
+                                                                        setData('instructor_type', currentValue);
                                                                         setCbOpen(false);
                                                                     }}
                                                                 >
-                                                                    {course.value}
+                                                                    {type.value}
                                                                     <Check
                                                                         className={cn(
                                                                             'ml-auto',
-                                                                            cbValue === course.value ? 'opacity-100' : 'opacity-0',
+                                                                            cbValue === type.value ? 'opacity-100' : 'opacity-0',
                                                                         )}
                                                                     />
                                                                 </CommandItem>
@@ -516,34 +502,34 @@ export default function EditLearner({ learner }: { learner: any }) {
                                             </PopoverContent>
                                         </Popover>
 
-                                        {getFieldError('course') && (
+                                        {getFieldError('instructor_type') && (
                                             <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
                                                 <AlertCircle className="h-4 w-4" />
-                                                {getFieldError('course')}
+                                                {getFieldError('intructor_type')}
                                             </div>
                                         )}
                                     </div>
 
-                                    {/* Enrollment Date */}
+                                    {/* Date Started */}
                                     <div className="space-y-2">
                                         <Label
-                                            htmlFor="enrollment_date"
+                                            htmlFor="date_started"
                                             className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300"
                                         >
                                             <Calendar className="h-4 w-4" />
-                                            Enrollment Date
+                                            Date Started
                                         </Label>
                                         <Input
-                                            id="enrollment_date"
+                                            id="date_started"
                                             type="date"
-                                            value={data.enrollment_date}
-                                            onChange={(e) => setData('enrollment_date', e.target.value)}
+                                            value={data.date_started}
+                                            onChange={(e) => setData('date_started', e.target.value)}
                                             className="border-gray-200 bg-gray-50 transition-colors focus:border-red-500 focus:ring-red-500/20 dark:border-gray-600 dark:bg-gray-700 dark:focus:border-red-400"
                                         />
-                                        {getFieldError('enrollment_date') && (
+                                        {getFieldError('date_started') && (
                                             <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
                                                 <AlertCircle className="h-4 w-4" />
-                                                {getFieldError('enrollment_date')}
+                                                {getFieldError('date_started')}
                                             </div>
                                         )}
                                     </div>
@@ -579,7 +565,7 @@ export default function EditLearner({ learner }: { learner: any }) {
                                                     <User className="h-4 w-4" />
                                                     <span className="font-medium">Username:</span>
                                                     <span className="rounded border bg-white px-2 py-1 font-mono dark:bg-gray-800">
-                                                        {data.student_number || 'Enter student number above'}
+                                                        {data.instructor_code || 'Enter instructor code above'}
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
@@ -604,7 +590,7 @@ export default function EditLearner({ learner }: { learner: any }) {
                                 {processing ? (
                                     <div className="flex items-center gap-2">
                                         <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                                        Updating Student Data...
+                                        Updating Instructor Data...
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-2">
@@ -619,7 +605,7 @@ export default function EditLearner({ learner }: { learner: any }) {
                     {/* Footer Info */}
                     <div className="mt-12 text-center">
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                            All fields marked with * are required. Student will receive auto-generated login credentials via email.
+                            All fields marked with * are required. Instructor will receive auto-generated login credentials via email.
                         </p>
                     </div>
                 </div>

@@ -3,8 +3,9 @@
 namespace App\Http\Requests\UserManagement;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreInstructorRequest extends FormRequest
+class UpdateInstructorRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,18 +22,35 @@ class StoreInstructorRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var \App\Models\User $instructor */
+        $instructor = $this->route('instructor');
+
         return [
             'fname' => ['required', 'regex:/^[A-Za-z\s\-]+$/'],
             'mname' => ['nullable', 'regex:/^[A-Za-z\s\-]+$/'],
             'lname' => ['required', 'regex:/^[A-Za-z\s\-]+$/'],
             'bday' => ['required', 'date'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'phone' => ['required', 'regex:/^\+63\d{10}$/', 'unique:users,phone'],
-            'instructor_code' => ['required', 'regex:/^[A-Z0-9\-]+$/', 'unique:learners,student_number'],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($instructor->id) // ignore user.id
+            ],
+            'phone' => [
+                'required',
+                'regex:/^\+63\d{10}$/',
+                Rule::unique('users', 'phone')->ignore($instructor->id) // ignore user.id
+            ],
+            'instructor_code' => [
+                'required',
+                'regex:/^[A-Z0-9\-]+$/',
+                Rule::unique('instructors', 'instructor_code')->ignore($instructor->instructor->id ?? null) // ignore learner.id
+            ],
             'instructor_type' => ['required', 'string'],
-            'date_started' => ['nullable', 'date']
+            'date_started' => ['nullable', 'date'],
+            'status' => ['required', 'in:active,inactive'],
         ];
     }
+
 
     public function messages()
     {
@@ -55,6 +73,8 @@ class StoreInstructorRequest extends FormRequest
             'instructor_code.unique' => 'This instructor code is already in use.',
             'instructor_type.required' => 'Instructor type is required.',
             'date_started.date' => 'Date started must be a valid date.',
+            'status.required' => 'Status is required.',
+            'status.in' => 'Status must be either active or inactive.',
         ];
     }
 }

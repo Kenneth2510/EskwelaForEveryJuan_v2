@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendInstructorCredentials extends Mailable
+class ResetInstructorPassword extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -42,7 +42,7 @@ class SendInstructorCredentials extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.userManagement.instructorManagement.instructor-credentials',
+            view: 'emails.userManagement.instructorManagement.reset-instructor-password',
             with: [
                 'email' => $this->email,
                 'plainPassword' => $this->plainPassword,

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Your Account Credentials</title>
+    <title>Password Reset Notification</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -79,17 +79,17 @@
             <h1>EskwelaForEveryJuan</h1>
         </div>
         <div class="email-body">
-            <h2>Welcome Aboard!</h2>
-            <p>Hi there,</p>
-            <p>We’re excited to have you join <strong>EskwelaForEveryJuan</strong> — your journey to learning and growth starts now!</p>
-            <p>You can log in using the credentials below:</p>
+            <h2>Password Reset Successful</h2>
+            <p>Hi {{ $userDetails->name }},</p>
+            <p>This is to inform you that your account password has been successfully reset.
+            You can now log in using the new temporary credentials provided below:</p>
 
             <div class="credential-box">
                 <p><strong>Username:</strong> {{ $userDetails->username }}</p>
-                <p><strong>Password:</strong> {{ $plainPassword }}</p>
+                <p><strong>Temporary Password:</strong> {{ $plainPassword }}</p>
             </div>
 
-            <p style="margin-bottom: 20px;">For your security, please make sure to change your password after logging in.</p>
+            <p style="margin-bottom: 20px;">For your security, please log in and update your password immediately.</p>
 
             <a href="{{ config('app.url') }}" class="button">Go to Login</a>
         </div>
