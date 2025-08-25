@@ -9,13 +9,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendAdminCredentials extends Mailable
+class ResetAdminCredentials extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $email;
     public $plainPassword;
     public $userDetails;
+
     /**
      * Create a new message instance.
      */
@@ -32,7 +33,7 @@ class SendAdminCredentials extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to EskwelaForEveryJuans',
+            subject: 'EskwelaForEveryJuan - Password Reset',
         );
     }
 
@@ -42,7 +43,7 @@ class SendAdminCredentials extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.userManagement.adminManagement.admin-credentials',
+            view: 'emails.userManagement.adminManagement.reset-admin-password',
             with: [
                 'email' => $this->email,
                 'plainPassword' => $this->plainPassword,

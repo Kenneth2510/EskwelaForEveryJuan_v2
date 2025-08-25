@@ -3,8 +3,9 @@
 namespace App\Http\Requests\UserManagement;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreAdminRequest extends FormRequest
+class UpdateAdminRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,18 +22,34 @@ class StoreAdminRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var \App\Models\User $admin */
+        $admin = $this->route('admin');
+
         return [
             'fname' => ['required', 'regex:/^[A-Za-z\s\-]+$/'],
             'mname' => ['nullable', 'regex:/^[A-Za-z\s\-]+$/'],
             'lname' => ['required', 'regex:/^[A-Za-z\s\-]+$/'],
             'bday' => ['required', 'date'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'phone' => ['required', 'regex:/^\+63\d{10}$/', 'unique:users,phone'],
-            'admin_code' => ['required', 'regex:/^[A-Z0-9\-]+$/', 'unique:admins,admin_code'],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($admin->id) // ignore user.id
+            ],
+            'phone' => [
+                'required',
+                'regex:/^\+63\d{10}$/',
+                Rule::unique('users', 'phone')->ignore($admin->id) // ignore user.id
+            ],
+            'admin_code' => [
+                'required',
+                'regex:/^[A-Z0-9\-]+$/',
+                Rule::unique('admins', 'admin_code')->ignore($admin->admin->id ?? null) // ignore learner.id
+            ],
+            'status' => ['required', 'in:active,inactive'],
         ];
     }
 
-        public function messages()
+    public function messages()
     {
         return [
             'fname.required' => 'First name is required.',
@@ -51,6 +68,8 @@ class StoreAdminRequest extends FormRequest
             'admin_code.required' => 'Admin code is required.',
             'admin_code.regex' => 'Admin code can only contain uppercase letters, numbers, and hyphens.',
             'admin_code.unique' => 'This admin code is already in use.',
+            'status.required' => 'Status is required.',
+            'status.in' => 'Status must be either active or inactive.',
         ];
     }
 }

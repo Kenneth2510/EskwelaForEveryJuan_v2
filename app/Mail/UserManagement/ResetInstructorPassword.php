@@ -32,7 +32,7 @@ class ResetInstructorPassword extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to EskwelaForEveryJuan',
+            subject: 'EskwelaForEveryJuan - Password Reset',
         );
     }
 

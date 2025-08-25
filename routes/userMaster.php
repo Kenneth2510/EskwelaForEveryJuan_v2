@@ -28,6 +28,14 @@ Route::prefix('user-management')->middleware(['auth', 'verified'])->group(functi
     Route::post('/instructor/bulk/upload', [InstructorManagementController::class, 'bulkUpload'])->name('instructors.bulk.upload');
     Route::post('/instructor/bulk/insert', [InstructorManagementController::class, 'bulkInsert'])->name('instructors.bulk.insert');
 
+    Route::post('/admin/{admin}/reset-password', [AdminManagementController::class, 'resetPassword'])->name('admin.resetPassword');
+    Route::post('/admin/export', [AdminManagementController::class, 'export'])->name('admins.export.post');
+    Route::get('/admin/bulk', [AdminManagementController::class, 'bulkPage'])->name('admins.bulk.page');
+    Route::get('/admin/bulk/template', [AdminManagementController::class, 'downloadTemplate'])->name('admins.bulk.template');
+    Route::post('/admin/bulk/upload', [AdminManagementController::class, 'bulkUpload'])->name('admins.bulk.upload');
+    Route::post('/admin/bulk/insert', [AdminManagementController::class, 'bulkInsert'])->name('admins.bulk.insert');
+
+
     Route::resource('learner', LearnerManagementController::class);
     Route::resource('instructor', InstructorManagementController::class);
     Route::resource('admin', AdminManagementController::class);
