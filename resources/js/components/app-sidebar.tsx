@@ -45,7 +45,7 @@ const mainNavItems: SidebarNavItem[] = [
         children: [
             {
                 title: 'Role Management',
-                href: '/role-management',
+                href: '/master-setup/role',
                 icon: UserCog,
             },
             {

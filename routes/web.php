@@ -9,7 +9,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('index');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
@@ -17,3 +17,4 @@ Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'i
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/userMaster.php';
+require __DIR__ . '/masterSetup.php';
