@@ -190,29 +190,25 @@ class RoleManagementService
 
     public function createRole(array $data): Role
     {
-        // create role
         $role = Role::create([
             'name' => $data['name'],
             'guard_name' => $data['guard_name'] ?? 'web',
             'description' => $data['description'] ?? null,
+            'category' => $data['category'] ?? 'learner',
         ]);
 
-        // ensure permissions exist and gather permission models / names
         $permNames = Arr::get($data, 'permissions', []);
         $permsToSync = [];
 
         foreach ($permNames as $permName) {
-            // create if not exists - this keeps frontend simple (no hard dependency)
             $permission = Permission::firstOrCreate(
                 ['name' => $permName, 'guard_name' => $data['guard_name'] ?? 'web']
             );
             $permsToSync[] = $permission->name;
         }
 
-        // sync permissions by name
         $role->syncPermissions($permsToSync);
 
-        // invalidate cache so index shows new role immediately
         $this->invalidateCache();
 
         return $role;
@@ -231,6 +227,7 @@ class RoleManagementService
             'id' => $role->id,
             'name' => $role->name,
             'description' => $role->description,
+            'category' => $role->category,
             'permissions' => $role->permissions->pluck('name'),
         ];
     }
@@ -242,10 +239,12 @@ class RoleManagementService
         $role->update([
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
+            'category' => $data['category'] ?? 'learner',
         ]);
 
         $role->syncPermissions($data['permissions']);
-        Cache::forget($this->cacheKey);
+
+        $this->invalidateCache();
 
         return $role;
     }

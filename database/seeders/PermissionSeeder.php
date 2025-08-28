@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Role;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 
@@ -12,7 +11,7 @@ class PermissionSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-   public function run()
+    public function run()
     {
         // map of role => permission names (flat arrays)
         $mapping = [
@@ -49,7 +48,7 @@ class PermissionSeeder extends Seeder
                 'quizzes_exams.viewSubmission',
                 'quizzes_exams.gradeSubmission',
                 'question_bank.manage',
-                'instructor.students.view', // optional - remove if not present
+                'instructor.students.view',
                 'instructor.students.message',
                 'message_forums.moderateMessage',
             ],
@@ -83,13 +82,28 @@ class PermissionSeeder extends Seeder
             ],
         ];
 
-        foreach ($mapping as $roleName => $perms) {
-            $role = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
-            // ensure permissions exist before sync (optional)
-            $existingPerms = Permission::whereIn('name', $perms)->pluck('name')->toArray();
-            $role->syncPermissions($existingPerms);
+        // Step 1: Ensure all permissions exist
+        $allPermissions = collect($mapping)->flatten()->unique();
+        foreach ($allPermissions as $perm) {
+            Permission::firstOrCreate([
+                'name' => $perm,
+                'guard_name' => 'web',
+            ]);
         }
 
-        $this->command->info('Preset roles created/updated.');
+        // Step 2: Create roles & sync permissions
+        foreach ($mapping as $roleName => $perms) {
+            $role = Role::firstOrCreate([
+                'name' => $roleName,
+                'guard_name' => 'web',
+            ], [
+                'category' => $roleName,
+                'description' => "Default role for {$roleName}",
+            ]);
+
+            $role->syncPermissions($perms);
+        }
+
+        $this->command->info('Permissions seeded and roles created/updated with their permissions.');
     }
 }

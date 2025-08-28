@@ -47,13 +47,14 @@ class RoleManagementController extends Controller
             'description' => 'nullable|string',
             'permissions' => 'required|array',
             'permissions.*' => 'string',
+            'category' => 'required|in:learner,instructor,admin',
         ]);
 
-        // delegate to service
         $this->roleService->createRole([
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
             'permissions' => $validated['permissions'],
+            'category' => $validated['category'],
             'guard_name' => 'web',
         ]);
 
@@ -86,16 +87,18 @@ class RoleManagementController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'permissions' => 'required|array',
+            'permissions.*' => 'string',
+            'category' => 'required|in:learner,instructor,admin',
         ]);
 
-        $this->roleService->updateRole($id, $request->only('name', 'permissions'));
+        $this->roleService->updateRole($id, $validated);
 
         return redirect()->route('role.index')->with('success', 'Role updated successfully.');
     }
-
     /**
      * Remove the specified resource from storage.
      */
