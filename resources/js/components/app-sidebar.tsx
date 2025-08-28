@@ -49,6 +49,11 @@ const mainNavItems: SidebarNavItem[] = [
                 icon: UserCog,
             },
             {
+                title: 'Assign Roles',
+                href: '/master-setup/role-assign',
+                icon: UserCog,
+            },
+            {
                 title: 'Configure Application',
                 href: '/configure',
                 icon: SlidersHorizontal,

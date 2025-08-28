@@ -22,7 +22,7 @@ class RoleManagementController extends Controller
     {
         $roles = $this->roleService->getAllRoles();
 
-        return Inertia::render('roleManagement/index', [
+        return Inertia::render('masterSetup/roleManagement/index', [
             'roles' => $roles,
         ]);
     }
@@ -32,7 +32,7 @@ class RoleManagementController extends Controller
      */
     public function create()
     {
-        return Inertia::render('roleManagement/actions/create', [
+        return Inertia::render('masterSetup/roleManagement/actions/create', [
             'presets' => $this->roleService->getPresetPermissions(),
         ]);
     }
@@ -76,7 +76,7 @@ class RoleManagementController extends Controller
     {
         $role = $this->roleService->findRoleWithPermissions($id);
 
-        return Inertia::render('roleManagement/actions/edit', [
+        return Inertia::render('masterSetup/roleManagement/actions/edit', [
             'role' => $role,
             'presets' => $this->roleService->getPresetPermissions(),
         ]);
