@@ -14,9 +14,10 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { can } from '@/lib/can';
 import { Link } from '@inertiajs/react';
-import ResetPassword from './actions/reset';
 import DeleteInstructor from './actions/delete';
+import ResetPassword from './actions/reset';
 
 export type Instructor = {
     id: string;
@@ -213,38 +214,43 @@ export const columns: ColumnDef<Instructor>[] = [
                             <DropdownMenuLabel className="font-semibold text-gray-900 dark:text-gray-100">Instructor Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-600" />
 
-                            <DropdownMenuItem asChild className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <Link
-                                    href={route('instructor.show', instructor.id)}
-                                    className="flex items-center gap-3 px-2 py-2 text-gray-700 dark:text-gray-300"
-                                >
-                                    <Eye className="h-4 w-4" />
-                                    <span>View Profile</span>
-                                </Link>
-                            </DropdownMenuItem>
-
-                            <DropdownMenuItem asChild className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <Link
-                                    href={route('instructor.edit', instructor.id)}
-                                    className="flex items-center gap-3 px-2 py-2 text-gray-700 dark:text-gray-300"
-                                >
-                                    <UserCog className="h-4 w-4" />
-                                    <span>Edit Instructor</span>
-                                </Link>
-                            </DropdownMenuItem>
-
+                            {can('user_management.view') && (
+                                <DropdownMenuItem asChild className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <Link
+                                        href={route('instructor.show', instructor.id)}
+                                        className="flex items-center gap-3 px-2 py-2 text-gray-700 dark:text-gray-300"
+                                    >
+                                        <Eye className="h-4 w-4" />
+                                        <span>View Profile</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                            )}
+                            {can('user_management.update') && (
+                                <DropdownMenuItem asChild className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <Link
+                                        href={route('instructor.edit', instructor.id)}
+                                        className="flex items-center gap-3 px-2 py-2 text-gray-700 dark:text-gray-300"
+                                    >
+                                        <UserCog className="h-4 w-4" />
+                                        <span>Edit Instructor</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                            )}
                             <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-600" />
-                            <DropdownMenuItem asChild className="cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/20">
-                                <div className="w-full">
-                                    <ResetPassword instructor={instructor.id} />
-                                </div>
-                            </DropdownMenuItem>
-
-                            <DropdownMenuItem asChild className="cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/20">
-                                <div className="w-full">
-                                    <DeleteInstructor instructor={instructor.id} />
-                                </div>
-                            </DropdownMenuItem>
+                            {can('user_management.update') && (
+                                <DropdownMenuItem asChild className="cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/20">
+                                    <div className="w-full">
+                                        <ResetPassword instructor={instructor.id} />
+                                    </div>
+                                </DropdownMenuItem>
+                            )}
+                            {can('user_management.delete') && (
+                                <DropdownMenuItem asChild className="cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/20">
+                                    <div className="w-full">
+                                        <DeleteInstructor instructor={instructor.id} />
+                                    </div>
+                                </DropdownMenuItem>
+                            )}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>

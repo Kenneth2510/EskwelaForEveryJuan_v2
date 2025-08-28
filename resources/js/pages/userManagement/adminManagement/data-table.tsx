@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { can } from '@/lib/can';
 import { Link } from '@inertiajs/react';
 import {
     ColumnDef,
@@ -76,34 +77,40 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
                     {/* Actions Buttons */}
                     <div className="flex items-center gap-2">
-                        <Button
-                            asChild
-                            className="bg-red-800 text-white shadow-sm transition-all duration-200 hover:scale-105 hover:bg-red-900 hover:shadow-md dark:bg-red-700 dark:hover:bg-red-600"
-                        >
-                            <Link href="/user-management/admin/create" className="flex items-center gap-2 px-6 py-2">
-                                <UserPlus className="h-4 w-4" />
-                                <span className="hidden sm:inline">Add New Admin</span>
-                                <span className="sm:hidden">Add</span>
-                            </Link>
-                        </Button>
-                        <ExportAdmin
-                            searchVal={globalFilter} // current global filter string
-                            sorting={sorting} // current sorting state
-                            onExport={(format) => {
-                                console.log(`Exporting in ${format} format with filter: ${globalFilter}`, { sorting });
-                            }}
-                        />
-                        <Button
-                            asChild
-                            variant="outline"
-                            className="border-gray-200 bg-white text-gray-800 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
-                        >
-                            <Link href="/user-management/admin/bulk" className="flex items-center gap-2 px-4 py-2">
-                                <Upload className="h-4 w-4" />
-                                <span className="hidden sm:inline">Bulk Insert</span>
-                                <span className="sm:hidden">Import</span>
-                            </Link>
-                        </Button>
+                        {can('admin_management.create') && (
+                            <Button
+                                asChild
+                                className="bg-red-800 text-white shadow-sm transition-all duration-200 hover:scale-105 hover:bg-red-900 hover:shadow-md dark:bg-red-700 dark:hover:bg-red-600"
+                            >
+                                <Link href="/user-management/admin/create" className="flex items-center gap-2 px-6 py-2">
+                                    <UserPlus className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Add New Admin</span>
+                                    <span className="sm:hidden">Add</span>
+                                </Link>
+                            </Button>
+                        )}
+                        {can('admin_management.view') && (
+                            <ExportAdmin
+                                searchVal={globalFilter} // current global filter string
+                                sorting={sorting} // current sorting state
+                                onExport={(format) => {
+                                    console.log(`Exporting in ${format} format with filter: ${globalFilter}`, { sorting });
+                                }}
+                            />
+                        )}
+                        {can('admin_management.create') && (
+                            <Button
+                                asChild
+                                variant="outline"
+                                className="border-gray-200 bg-white text-gray-800 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
+                            >
+                                <Link href="/user-management/admin/bulk" className="flex items-center gap-2 px-4 py-2">
+                                    <Upload className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Bulk Insert</span>
+                                    <span className="sm:hidden">Import</span>
+                                </Link>
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>

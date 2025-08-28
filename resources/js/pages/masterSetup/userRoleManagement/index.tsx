@@ -1,8 +1,6 @@
-import MySwal from '@/components/swal-alert';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import { useEffect } from 'react';
+import { Head } from '@inertiajs/react';
 import { columns, type UserWithRole } from './columns';
 import { DataTable } from './data-table';
 import { Users, Shield, CheckCircle } from 'lucide-react';
