@@ -7,47 +7,47 @@ const FAQSection = () => {
     const [openFAQ, setOpenFAQ] = useState(null);
 
     const faqs = [
-        {
-            question: 'How do I get started with EskwelaForEveryJuan?',
-            answer: 'Getting started is simple! Just create a free account, browse our course catalog, and enroll in courses that interest you. You can start learning immediately after enrollment.',
-        },
-        {
-            question: 'Are the certificates recognized by employers?',
-            answer: 'Yes, our certificates are industry-recognized and include verification features. Many of our partner companies accept our certificates for hiring and promotion decisions.',
-        },
-        {
-            question: 'Can I access courses on mobile devices?',
-            answer: 'Absolutely! Our platform is fully responsive and optimized for mobile learning. You can access all course materials, videos, and assessments on any device.',
-        },
-        {
-            question: 'What payment methods do you accept?',
-            answer: 'We accept various payment methods including credit cards, PayPal, GCash, and bank transfers. We also offer flexible payment plans for certain courses.',
-        },
-        {
-            question: 'How do I become an instructor on the platform?',
-            answer: 'To become an instructor, apply through our instructor portal with your credentials and course proposal. Our team will review your application and guide you through the onboarding process.',
-        },
-        {
-            question: 'Is there a refund policy?',
-            answer: "Yes, we offer a 30-day money-back guarantee for most courses. If you're not satisfied with a course, you can request a full refund within the first 30 days.",
-        },
-        {
-            question: 'Do you offer live classes or just recorded content?',
-            answer: 'We offer both! Our platform includes live interactive sessions with instructors as well as self-paced recorded content that you can access anytime.',
-        },
-        {
-            question: 'How long do I have access to purchased courses?',
-            answer: 'Once you purchase a course, you have lifetime access to the content, including any future updates and additional materials added by the instructor.',
-        },
-        {
-            question: 'Is there customer support available?',
-            answer: 'Yes, we provide 24/7 customer support through chat, email, and phone. Our support team is always ready to help with any questions or technical issues.',
-        },
-        {
-            question: 'Can I get college credit for completed courses?',
-            answer: 'Some of our courses are eligible for college credit through our partner institutions. Check the individual course descriptions for credit eligibility information.',
-        },
-    ];
+    {
+      question: "How do I enroll in a course?",
+      answer:
+        "Students are enrolled by their school admin or by entering a course code provided by their instructor. Contact your instructor or admin to get started.",
+    },
+    {
+      question: "What types of lessons are available?",
+      answer:
+        "Lessons are interactive and tailored to your school’s curriculum, including videos, quizzes, and reading materials designed to enhance your learning experience.",
+    },
+    {
+      question: "How do I complete activities and exams?",
+      answer:
+        "Activities and exams are accessed through your course dashboard. Complete them as assigned, and your progress will be tracked automatically.",
+    },
+    {
+      question: "How can I earn a certificate?",
+      answer:
+        "Upon successfully completing all course lessons, activities, and exams, you’ll receive a certificate from your school, verifiable through the LMS.",
+    },
+    {
+      question: "How do instructors create a course?",
+      answer:
+        "Instructors can use our intuitive course builder to design content, including lessons and assessments, tailored to their teaching goals.",
+    },
+    {
+      question: "What is the course approval process?",
+      answer:
+        "After creating a course, instructors submit it to the school admin for review. Once approved, the course can be deployed for student enrollment.",
+    },
+    {
+      question: "How do instructors support students?",
+      answer:
+        "Instructors can monitor student progress, provide personalized feedback, and answer questions through the LMS’s communication tools.",
+    },
+    {
+      question: "What should I do if I have technical issues?",
+      answer:
+        "Contact your school’s LMS support team via email or the helpdesk link in the platform for assistance with any technical difficulties.",
+    },
+  ];
 
     return (
         <section id="faqs" className="bg-[#EEEEEE]/30 px-4 py-24">

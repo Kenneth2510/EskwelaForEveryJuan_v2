@@ -1,34 +1,52 @@
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import { canAny } from '@/lib/can';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { LayoutGrid, SlidersHorizontal, SquareUser, User, UserCog } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
-    },
-];
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
-];
+type SidebarNavItem = NavItem & {
+    icon?: React.ComponentType<any>;
+    children?: SidebarNavItem[];
+};
 
 export function AppSidebar() {
+    const mainNavItems: SidebarNavItem[] = [
+        {
+            title: 'Dashboard',
+            href: '/dashboard',
+            icon: LayoutGrid,
+        },
+        ...(canAny(['user_management.view'])
+            ? [
+                  {
+                      title: 'User Management',
+                      icon: SquareUser,
+                      children: [
+                          ...(canAny(['user_management.view']) ? [{ title: 'Learners', href: '/user-management/learner', icon: User }] : []),
+                          ...(canAny(['user_management.view']) ? [{ title: 'Instructors', href: '/user-management/instructor', icon: User }] : []),
+                          ...(canAny(['admin_management.view']) ? [{ title: 'Admins', href: '/user-management/admin', icon: User }] : []),
+                      ],
+                  },
+              ]
+            : []),
+        ...(canAny(['settings.roles_permissions', 'user_management.assignRoles', 'admin_management.assignRoles', 'settings.update'])
+            ? [
+                  {
+                      title: 'Master Setup',
+                      icon: SlidersHorizontal,
+                      children: [
+                          ...(canAny(['settings.roles_permissions']) ? [{ title: 'Role Management', href: '/master-setup/role', icon: UserCog }] : []),
+                          ...(canAny(['user_management.assignRoles', 'admin_management.assignRoles']) ? [{ title: 'Assign Roles', href: '/master-setup/role-assign', icon: UserCog }] : []),
+                          ...(canAny(['settings.update']) ? [{ title: 'Configure Application', href: '/configure', icon: SlidersHorizontal }] : []),
+                      ],
+                  },
+              ]
+            : []),
+    ];
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -48,7 +66,6 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

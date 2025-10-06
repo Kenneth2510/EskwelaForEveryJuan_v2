@@ -1,15 +1,15 @@
 import { BookOpen, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
-
-// Header Component
 const Header = ({ activeSection, setActiveSection }) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const menuRef = useRef(null);
+    const toggleButtonRef = useRef(null);
 
     const navItems = [
-        { id: 'about', label: 'About' },
-        { id: 'features', label: 'Features' },
-        { id: 'faqs', label: 'FAQs' },
+        { id: "about", label: "About" },
+        { id: "features", label: "Features" },
+        { id: "faqs", label: "FAQs" },
     ];
 
     const handleNavClick = (id) => {
@@ -17,71 +17,118 @@ const Header = ({ activeSection, setActiveSection }) => {
         setMobileMenuOpen(false);
         const element = document.getElementById(id);
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
+            element.scrollIntoView({ behavior: "smooth" });
         }
     };
 
+    // Close mobile menu when clicking outside or pressing Escape
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            if (
+                mobileMenuOpen &&
+                menuRef.current &&
+                !menuRef.current.contains(event.target) &&
+                !toggleButtonRef.current.contains(event.target)
+            ) {
+                setMobileMenuOpen(false);
+            }
+        };
+
+        const handleEscapeKey = (event) => {
+            if (mobileMenuOpen && event.key === "Escape") {
+                setMobileMenuOpen(false);
+                toggleButtonRef.current?.focus();
+            }
+        };
+
+        document.addEventListener("mousedown", handleOutsideClick);
+        document.addEventListener("keydown", handleEscapeKey);
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClick);
+            document.removeEventListener("keydown", handleEscapeKey);
+        };
+    }, [mobileMenuOpen]);
+
     return (
-        <header className="fixed top-6 left-1/2 z-50 w-[90%] max-w-6xl -translate-x-1/2 transform">
-            <div className="rounded-full border border-gray-200/50 bg-white/90 shadow-lg backdrop-blur-xl">
-                <div className="px-8 py-4">
+        <header className="fixed top-4 left-1/2 z-50 w-[90%] max-w-7xl -translate-x-1/2 transform sm:top-6">
+            <div className="rounded-2xl border border-gray-200/50 bg-white/90 shadow-lg backdrop-blur-xl">
+                <div className="px-4 py-4 sm:px-6 sm:py-5">
                     <div className="flex items-center justify-between">
                         {/* Logo & Title */}
                         <div className="flex items-center space-x-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#800000]">
-                                <BookOpen className="h-5 w-5 text-white" />
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#800000] sm:h-14 sm:w-14">
+                                <BookOpen className="h-6 w-6 text-white sm:h-7 sm:w-7" />
                             </div>
-                            <span className="text-lg font-bold text-[#111111]">EskwelaForEveryJuan</span>
+                            <span className="text-lg font-bold text-[#111111] sm:text-xl">
+                                EskwelaForEveryJuan
+                            </span>
                         </div>
 
                         {/* Navigation */}
-                        <nav className="hidden items-center space-x-8 md:flex">
+                        <nav className="hidden items-center space-x-6 lg:space-x-8 md:flex">
                             {navItems.map((item) => (
                                 <button
                                     key={item.id}
                                     onClick={() => handleNavClick(item.id)}
-                                    className={`group relative font-medium text-gray-700 transition-colors hover:text-[#800000] ${
-                                        activeSection === item.id ? 'text-[#800000]' : ''
+                                    className={`relative py-2 font-medium text-gray-700 transition-colors hover:text-[#800000] text-sm lg:text-base ${
+                                        activeSection === item.id ? "text-[#800000]" : ""
                                     }`}
+                                    aria-current={activeSection === item.id ? "page" : undefined}
                                 >
                                     {item.label}
-                                    <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-[#800000] transition-all duration-300 group-hover:w-full"></span>
+                                    <span className="absolute -bottom-0.5 left-0 h-0.5 w-0 bg-[#800000] transition-all duration-300 group-hover:w-full"></span>
                                 </button>
                             ))}
                         </nav>
-                        {/* Login Button */}
-                        <div className="flex items-center space-x-4">
-                            <button className="rounded-full bg-[#800000] px-6 py-2.5 font-semibold text-white shadow-md transition-all duration-300 hover:bg-[#600000] hover:shadow-lg">
-                                Get Started
-                            </button>
+
+                        {/* Login Button & Menu Toggle */}
+                        <div className="flex items-center space-x-3">
+                            <a href="/login">
+                                <button
+                                    className="rounded-full bg-[#800000] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-[#600000] hover:shadow-lg sm:px-6 sm:text-base"
+                                    aria-label="Get Started"
+                                >
+                                    Get Started
+                                </button>
+                            </a>
                             <button
-                                className="rounded-full p-2 transition-colors hover:bg-gray-100 md:hidden"
+                                ref={toggleButtonRef}
+                                className="rounded-full p-3 transition-colors hover:bg-gray-100 md:hidden"
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                                aria-expanded={mobileMenuOpen}
                             >
-                                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                                {mobileMenuOpen ? (
+                                    <X className="h-7 w-7" />
+                                ) : (
+                                    <Menu className="h-7 w-7" />
+                                )}
                             </button>
                         </div>
                     </div>
 
                     {/* Mobile Menu */}
                     {mobileMenuOpen && (
-                        <div className="mt-4 border-t border-gray-200 px-4 pb-4 md:hidden">
-                            {navItems.map((item) => (
+                        <nav
+                            ref={menuRef}
+                            className="mt-4 animate-slide-down border-t border-gray-200 px-4 pb-5 md:hidden"
+                            role="navigation"
+                            aria-label="Mobile navigation"
+                        >
+                            {navItems.map((item, index) => (
                                 <a
                                     key={item.id}
                                     href={`#${item.id}`}
-                                    onClick={() => {
-                                        setActiveSection(item.id);
-                                        setMobileMenuOpen(false);
-                                    }}
-                                    className={`block py-2 font-medium text-gray-700 transition-colors hover:text-[#800000] ${
-                                        activeSection === item.id ? 'text-[#800000]' : ''
-                                    }`}
+                                    onClick={() => handleNavClick(item.id)}
+                                    className={`block py-4 text-lg font-medium text-gray-700 transition-colors hover:text-[#800000] ${
+                                        activeSection === item.id ? "text-[#800000]" : ""
+                                    } ${index === 0 ? "pt-5" : ""}`}
+                                    aria-current={activeSection === item.id ? "page" : undefined}
                                 >
                                     {item.label}
                                 </a>
                             ))}
-                        </div>
+                        </nav>
                     )}
                 </div>
             </div>
